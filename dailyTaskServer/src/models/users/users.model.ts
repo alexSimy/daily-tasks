@@ -1,16 +1,19 @@
-const { GraphQLError } = require('graphql');
+import { GraphQLError } from 'graphql';
 
-import { DBUser, User } from './types';
-const users = require('./users.mongo');
+import { User, UserInput } from './users.schema';
+import users from './users.mongo';
 
-async function getUser(username: string, password: string): Promise<DBUser> {
+export async function getUser(
+  username: string,
+  password: string
+): Promise<User> {
   console.log(username, password);
 
-  const foundUser: DBUser | undefined = await users.findOne({
+  const foundUser: User | undefined | null = await users.findOne({
     username: username,
   });
   console.log(JSON.stringify(foundUser));
-  //decrypt DBUser's password using bcrypt
+  //decrypt User's password using bcrypt
   if (!foundUser) {
     throw new GraphQLError(`Wrong username!`, {
       extensions: { code: 'BAD_USER_INPUT' },
@@ -25,37 +28,53 @@ async function getUser(username: string, password: string): Promise<DBUser> {
   }
 }
 
-async function updateUser(user: DBUser) {
+export async function getAllUsers(): Promise<User[]> {
+  const usersList = await users.find(
+    {},
+    {
+      _id: 0,
+      __v: 0,
+    }
+  );
+  return usersList;
+}
+
+export async function updateUser(user: User): Promise<User | undefined> {
   try {
     await users.updateOne(
       {
         id: user.id,
-        username: user.username,
       },
       user,
       {
         upsert: true,
       }
     );
-    if (await getUser(user.username, user.password)) {
+    const insertedUser = await getUser(user.username, user.password);
+    if (insertedUser) {
       console.log(`user ${user.username} inserted!`);
+      return insertedUser;
+    } else {
+      throw new GraphQLError(`Cannot update User!`, {
+        extensions: { code: 'UPDATE ERROR!' },
+      });
     }
   } catch (err) {
     console.log(`User could not be saved: ${err}`);
   }
 }
 
-async function createUser(user: DBUser) {
-  await updateUser(user);
+export async function createUser(user: UserInput): Promise<User | undefined> {
+  const newUser: User = {
+    id: users.length,
+    username: user.username,
+    password: user.password,
+  };
+  return await updateUser(newUser);
 }
 
-async function emptyUsersCollection() {
+export async function deleteUser(user: User) {}
+
+export async function emptyUsersCollection() {
   await users.deleteMany({});
 }
-
-module.exports = {
-  getUser,
-  createUser,
-  updateUser,
-  emptyUsersCollection,
-};

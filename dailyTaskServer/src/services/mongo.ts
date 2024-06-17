@@ -11,7 +11,7 @@ mongoose.connection.on('error', (err: Error) => {
   console.log(`Mongo Error: ${err}`);
 });
 
-async function mongoConnect(test: boolean = false) {
+export async function mongoConnect(test: boolean = false) {
   try {
     if (process.env.MONGO_URL_TEST && process.env.MONGO_URL) {
       await mongoose.connect(
@@ -23,15 +23,10 @@ async function mongoConnect(test: boolean = false) {
   }
 }
 
-async function mongoDisconnect() {
+export async function mongoDisconnect() {
   try {
     await mongoose.disconnect();
   } catch (err) {
     throw new Error(`mongoDisconnect: ${err}`);
   }
 }
-
-module.exports = {
-  mongoConnect,
-  mongoDisconnect,
-};

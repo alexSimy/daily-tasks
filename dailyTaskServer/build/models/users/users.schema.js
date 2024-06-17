@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.CompleteUserInput = exports.UserInput = exports.User = void 0;
 const type_graphql_1 = require("type-graphql");
 let User = class User {
 };
@@ -29,3 +29,27 @@ __decorate([
 exports.User = User = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], User);
+let UserInput = class UserInput {
+};
+exports.UserInput = UserInput;
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], UserInput.prototype, "username", void 0);
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", String)
+], UserInput.prototype, "password", void 0);
+exports.UserInput = UserInput = __decorate([
+    (0, type_graphql_1.InputType)()
+], UserInput);
+let CompleteUserInput = class CompleteUserInput extends UserInput {
+};
+exports.CompleteUserInput = CompleteUserInput;
+__decorate([
+    (0, type_graphql_1.Field)(),
+    __metadata("design:type", Number)
+], CompleteUserInput.prototype, "id", void 0);
+exports.CompleteUserInput = CompleteUserInput = __decorate([
+    (0, type_graphql_1.InputType)()
+], CompleteUserInput);

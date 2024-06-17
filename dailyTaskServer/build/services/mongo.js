@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.mongoDisconnect = exports.mongoConnect = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 require('dotenv').config();
 // it'll only get triggered once due to "once" instead of "on"
@@ -22,6 +23,7 @@ async function mongoConnect(test = false) {
         throw new Error(`mongoConnect: ${err}`);
     }
 }
+exports.mongoConnect = mongoConnect;
 async function mongoDisconnect() {
     try {
         await mongoose_1.default.disconnect();
@@ -30,7 +32,4 @@ async function mongoDisconnect() {
         throw new Error(`mongoDisconnect: ${err}`);
     }
 }
-module.exports = {
-    mongoConnect,
-    mongoDisconnect,
-};
+exports.mongoDisconnect = mongoDisconnect;
